@@ -8,7 +8,12 @@ import br.com.fiap.t2tdsps.expedicaoatomo.mapper.PageResponse;
 import br.com.fiap.t2tdsps.expedicaoatomo.mapper.PontoMapaMapper;
 import br.com.fiap.t2tdsps.expedicaoatomo.service.AreaAplicacaoService;
 import br.com.fiap.t2tdsps.expedicaoatomo.service.PontoMapaService;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/areas")
+@Validated
 public class AreaAplicacaoController {
 
     private final AreaAplicacaoService areaAplicacaoService;
@@ -42,14 +48,16 @@ public class AreaAplicacaoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AreaAplicacaoResponse> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<AreaAplicacaoResponse> buscarPorId(
+            @PathVariable @Positive(message = "id deve ser maior que zero") Long id) {
         return ResponseEntity.ok(AreaAplicacaoMapper.toResponse(areaAplicacaoService.buscarPorId(id)));
     }
 
     @GetMapping("/{id}/pontos")
-    public PageResponse<PontoMapaResponse> listarPontos(@PathVariable Long id,
-                                                        @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                        @RequestParam(required = false, defaultValue = "10") Integer sizePage) {
+    public PageResponse<PontoMapaResponse> listarPontos(
+            @PathVariable @Positive(message = "id deve ser maior que zero") Long id,
+            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero(message = "page deve ser 0 ou maior") Integer page,
+            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "sizePage deve ficar entre 1 e 50") @Max(value = 50, message = "sizePage deve ficar entre 1 e 50") Integer sizePage) {
         return PageResponse.from(
                 pontoMapaService.listarPorArea(id, page, sizePage).map(PontoMapaMapper::toResponse));
     }

@@ -1,0 +1,21 @@
+package br.com.fiap.t2tdsps.expedicaoatomo.validation;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+import java.util.Set;
+
+public class UfValidaValidator implements ConstraintValidator<UfValida, String> {
+
+    private static final Set<String> SIGLAS = Set.of(
+            "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
+            "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO");
+
+    @Override
+    public boolean isValid(String uf, ConstraintValidatorContext context) {
+        if (uf == null) {
+            return true; // quem barra o nulo é o @NotNull; no filtro da listagem a UF é opcional
+        }
+        return SIGLAS.contains(uf);
+    }
+}
