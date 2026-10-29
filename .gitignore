@@ -33,9 +33,3 @@ data/
 
 ### Documentos do Challenge (ficam fora do repositório) ###
 *.pdf
-
-### Ferramentas locais ###
-CLAUDE.md
-CLAUDE.local.md
-.claude/
-.claude-*
