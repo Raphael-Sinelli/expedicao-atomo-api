@@ -124,9 +124,14 @@ public class AreaAplicacaoController {
             @Parameter(description = "Id da área, de 1 a 5", example = "1")
             @PathVariable @Positive(message = "id deve ser maior que zero") Long id,
             @Parameter(description = "Número da página, começando em 0", example = "0")
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero(message = "page deve ser 0 ou maior") Integer page,
+            @RequestParam(required = false, defaultValue = "0")
+            @PositiveOrZero(message = "page deve ser 0 ou maior")
+            Integer page,
             @Parameter(description = "Quantidade de pontos por página, de 1 a 50", example = "10")
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "sizePage deve ficar entre 1 e 50") @Max(value = 50, message = "sizePage deve ficar entre 1 e 50") Integer sizePage) {
+            @RequestParam(required = false, defaultValue = "10")
+            @Min(value = 1, message = "sizePage deve ficar entre 1 e 50")
+            @Max(value = 50, message = "sizePage deve ficar entre 1 e 50")
+            Integer sizePage) {
         return PageResponse.from(
                 pontoMapaService.listarPorArea(id, page, sizePage).map(PontoMapaMapper::toResponse));
     }

@@ -78,9 +78,14 @@ public class PontoMapaController {
             @Parameter(description = "Tipo do ponto: INSTALACAO, NATURAL ou HISTORICO", example = "INSTALACAO")
             @RequestParam(required = false) TipoPonto tipo,
             @Parameter(description = "Número da página, começando em 0", example = "0")
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero(message = "page deve ser 0 ou maior") Integer page,
+            @RequestParam(required = false, defaultValue = "0")
+            @PositiveOrZero(message = "page deve ser 0 ou maior")
+            Integer page,
             @Parameter(description = "Quantidade de pontos por página, de 1 a 50", example = "10")
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "sizePage deve ficar entre 1 e 50") @Max(value = 50, message = "sizePage deve ficar entre 1 e 50") Integer sizePage) {
+            @RequestParam(required = false, defaultValue = "10")
+            @Min(value = 1, message = "sizePage deve ficar entre 1 e 50")
+            @Max(value = 50, message = "sizePage deve ficar entre 1 e 50")
+            Integer sizePage) {
         return PageResponse.from(
                 pontoMapaService.listar(areaId, uf, tipo, page, sizePage).map(PontoMapaMapper::toResponse));
     }
@@ -105,9 +110,14 @@ public class PontoMapaController {
             @Parameter(description = "Parte do título, de 2 a 100 caracteres", example = "reator")
             @RequestParam @NotBlank(message = "termo não pode ficar em branco") @Size(min = 2, max = 100, message = "termo deve ter entre 2 e 100 caracteres") String termo,
             @Parameter(description = "Número da página, começando em 0", example = "0")
-            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero(message = "page deve ser 0 ou maior") Integer page,
+            @RequestParam(required = false, defaultValue = "0")
+            @PositiveOrZero(message = "page deve ser 0 ou maior")
+            Integer page,
             @Parameter(description = "Quantidade de pontos por página, de 1 a 50", example = "10")
-            @RequestParam(required = false, defaultValue = "10") @Min(value = 1, message = "sizePage deve ficar entre 1 e 50") @Max(value = 50, message = "sizePage deve ficar entre 1 e 50") Integer sizePage) {
+            @RequestParam(required = false, defaultValue = "10")
+            @Min(value = 1, message = "sizePage deve ficar entre 1 e 50")
+            @Max(value = 50, message = "sizePage deve ficar entre 1 e 50")
+            Integer sizePage) {
         return PageResponse.from(
                 pontoMapaService.buscarPorTitulo(termo, page, sizePage).map(PontoMapaMapper::toResponse));
     }
