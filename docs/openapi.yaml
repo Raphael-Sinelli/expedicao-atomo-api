@@ -1,0 +1,1088 @@
+openapi: 3.1.0
+info:
+  title: "Expedição Átomo: API do Mapa Nuclear"
+  description: "API REST que alimenta o Mapa Nuclear do app Expedição Átomo, criado\
+    \ no Challenge FIAP 2026 com o Centro Tecnológico da Marinha em São Paulo (CTMSP).\
+    \ Ela serve as cinco áreas de aplicação do enunciado (saúde, indústria, agricultura,\
+    \ pesquisa científica e energia) e os lugares reais do mapa, como o IPEN, Angra\
+    \ 1 e 2, a Moscamed e o local do acidente com césio-137 em Goiânia, cada um com\
+    \ o link da fonte oficial. As missões Mito ou Verdade e o XP ficam na API .NET."
+  contact:
+    name: "Grupo Expedição Átomo, 2TDSPS"
+  version: 1.0.0 (Sprint 1)
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+tags:
+- name: Áreas de aplicação
+  description: "As cinco áreas do enunciado do CTMSP: saúde, indústria, agricultura,\
+    \ pesquisa científica e energia. É um catálogo fixo e só de leitura, sem POST,\
+    \ PUT ou DELETE, porque os ids e nomes são os mesmos do modelo Oracle e dos dados\
+    \ do app, e os filtros do mapa dependem deles."
+- name: Pontos do mapa
+  description: "CRUD dos lugares reais que aparecem no mapa do app, de hospitais e\
+    \ usinas a praias com radiação natural e ao acidente de Goiânia. Todo ponto traz\
+    \ resumo, curiosidade e o link da fonte oficial."
+paths:
+  /api/pontos/{id}:
+    get:
+      tags:
+      - Pontos do mapa
+      summary: Busca um ponto pelo id
+      description: Devolve o ponto com o id e o nome da área. Os pontos de teste têm
+        ids de 1 a 11.
+      operationId: buscarPontoPorId
+      parameters:
+      - name: id
+        in: path
+        description: Id do ponto
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 2
+      responses:
+        "200":
+          description: Ponto encontrado
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PontoMapaResponse"
+        "400":
+          description: id menor que 1 ou que não é número
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                id menor que 1:
+                  description: id menor que 1
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: id
+                      message: id deve ser maior que zero
+                id que não é número:
+                  description: id que não é número
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "Parâmetro 'id' inválido: abc"
+        "404":
+          description: Nenhum ponto com esse id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 404
+                error: Not Found
+                message: Ponto do mapa com id 9999 não existe
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+    put:
+      tags:
+      - Pontos do mapa
+      summary: Atualiza todos os campos de um ponto
+      description: Substitui todos os campos editáveis do ponto. O id e a data de
+        cadastro continuam os mesmos. O título não pode ser igual ao de outro ponto.
+      operationId: atualizarPonto
+      parameters:
+      - name: id
+        in: path
+        description: Id do ponto a atualizar; o POST de exemplo cria o id 12
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 12
+      requestBody:
+        description: "Todos os campos editáveis do ponto, com as mesmas regras do\
+          \ POST. Uma curiosidade ausente apaga a que estava gravada."
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PontoMapaRequest"
+        required: true
+      responses:
+        "200":
+          description: Ponto atualizado
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PontoMapaResponse"
+        "400":
+          description: "id, campos ou JSON inválidos"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                UF, latitude e URL inválidas:
+                  description: "UF, latitude e URL inválidas"
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: uf
+                      message: "UF deve ser uma das 27 siglas oficiais em maiúsculas,\
+                        \ como SP"
+                    - field: latitude
+                      message: "Latitude deve estar entre -33.75 e 5.27, do Chuí (RS)\
+                        \ ao Monte Caburaí (RR)"
+                    - field: urlFonte
+                      message: URL da fonte deve começar com https:// e não pode ter
+                        espaços
+                id menor que 1:
+                  description: id menor que 1
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: id
+                      message: id deve ser maior que zero
+                JSON malformado ou tipo inexistente:
+                  description: JSON malformado ou tipo inexistente
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "JSON inválido: confira vírgulas, aspas e o tipo de cada\
+                      \ campo. tipo aceita INSTALACAO, NATURAL ou HISTORICO"
+        "404":
+          description: Ponto ou área inexistente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                ponto inexistente:
+                  description: ponto inexistente
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 404
+                    error: Not Found
+                    message: Ponto do mapa com id 9999 não existe
+                área inexistente:
+                  description: área inexistente
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 404
+                    error: Not Found
+                    message: Área de aplicação com id 99 não existe
+        "409":
+          description: Outro ponto já usa esse título
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 409
+                error: Conflict
+                message: "Já existe um ponto do mapa com o título 'Radiofármacos do\
+                  \ IPEN', sem diferenciar maiúsculas de minúsculas"
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+    delete:
+      tags:
+      - Pontos do mapa
+      summary: Exclui um ponto do mapa
+      description: "Remove o ponto e devolve 204 sem corpo. Depois disso, um GET do\
+        \ mesmo id devolve 404."
+      operationId: excluirPonto
+      parameters:
+      - name: id
+        in: path
+        description: Id do ponto a excluir
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 12
+      responses:
+        "204":
+          description: Ponto excluído
+        "400":
+          description: id menor que 1 ou que não é número
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                id menor que 1:
+                  description: id menor que 1
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: id
+                      message: id deve ser maior que zero
+                id que não é número:
+                  description: id que não é número
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "Parâmetro 'id' inválido: abc"
+        "404":
+          description: Nenhum ponto com esse id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 404
+                error: Not Found
+                message: Ponto do mapa com id 9999 não existe
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/pontos:
+    get:
+      tags:
+      - Pontos do mapa
+      summary: Lista os pontos do mapa com filtros opcionais
+      description: "Página de pontos ordenada por título. Os filtros areaId, uf e\
+        \ tipo são opcionais e podem ser combinados, como em ?uf=SP&tipo=INSTALACAO.\
+        \ Filtro ausente não restringe nada."
+      operationId: listarPontos
+      parameters:
+      - name: areaId
+        in: query
+        description: "Id da área de aplicação, de 1 a 5"
+        required: false
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 1
+      - name: uf
+        in: query
+        description: Sigla da UF em maiúsculas
+        required: false
+        schema:
+          type: string
+        example: SP
+      - name: tipo
+        in: query
+        description: "Tipo do ponto: INSTALACAO, NATURAL ou HISTORICO"
+        required: false
+        schema:
+          type: string
+          enum:
+          - INSTALACAO
+          - NATURAL
+          - HISTORICO
+        example: INSTALACAO
+      - name: page
+        in: query
+        description: "Número da página, começando em 0"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: sizePage
+        in: query
+        description: "Quantidade de pontos por página, de 1 a 50"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+          maximum: 50
+          minimum: 1
+        example: 10
+      responses:
+        "200":
+          description: "Página de pontos, que pode vir vazia"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponsePontoMapaResponse"
+        "400":
+          description: Filtro ou paginação inválidos
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                UF fora da lista oficial:
+                  description: UF fora da lista oficial
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: uf
+                      message: "UF deve ser uma das 27 siglas oficiais em maiúsculas,\
+                        \ como SP"
+                tipo inexistente:
+                  description: tipo inexistente
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "Parâmetro 'tipo' inválido: BOMBA. Valores aceitos: [INSTALACAO,\
+                      \ NATURAL, HISTORICO]"
+                sizePage acima de 50:
+                  description: sizePage acima de 50
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: sizePage
+                      message: sizePage deve ficar entre 1 e 50
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+    post:
+      tags:
+      - Pontos do mapa
+      summary: Cadastra um ponto no mapa
+      description: "O servidor gera o id e a data de cadastro e busca a área pelo\
+        \ idArea. O título não pode repetir o de outro ponto, sem diferenciar maiú\
+        sculas. O exemplo cadastra o reator Argonauta, do IEN, que não está nos dados\
+        \ de teste."
+      operationId: criarPonto
+      requestBody:
+        description: "Dados do novo ponto. O id e a data de cadastro não vão no corpo,\
+          \ porque o servidor gera os dois."
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PontoMapaRequest"
+        required: true
+      responses:
+        "201":
+          description: Ponto criado; o header Location aponta para ele
+          headers:
+            Location:
+              description: Caminho do ponto criado
+              style: simple
+              schema:
+                type: string
+                example: /api/pontos/12
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PontoMapaResponse"
+        "400":
+          description: Campos inválidos ou JSON malformado
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                UF, latitude e URL inválidas:
+                  description: "UF, latitude e URL inválidas"
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: uf
+                      message: "UF deve ser uma das 27 siglas oficiais em maiúsculas,\
+                        \ como SP"
+                    - field: latitude
+                      message: "Latitude deve estar entre -33.75 e 5.27, do Chuí (RS)\
+                        \ ao Monte Caburaí (RR)"
+                    - field: urlFonte
+                      message: URL da fonte deve começar com https:// e não pode ter
+                        espaços
+                JSON malformado ou tipo inexistente:
+                  description: JSON malformado ou tipo inexistente
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "JSON inválido: confira vírgulas, aspas e o tipo de cada\
+                      \ campo. tipo aceita INSTALACAO, NATURAL ou HISTORICO"
+        "404":
+          description: idArea não corresponde a nenhuma área
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 404
+                error: Not Found
+                message: Área de aplicação com id 99 não existe
+        "409":
+          description: Já existe ponto com esse título
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 409
+                error: Conflict
+                message: "Já existe um ponto do mapa com o título 'Radiofármacos do\
+                  \ IPEN', sem diferenciar maiúsculas de minúsculas"
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/pontos/busca:
+    get:
+      tags:
+      - Pontos do mapa
+      summary: Busca pontos por parte do título
+      description: "Requisito \"busca por texto usando Query Method\": o repositó\
+        rio usa findByTituloContainingIgnoreCase, que acha o termo em qualquer parte\
+        \ do título sem diferenciar maiúsculas. Com termo=reator, volta o RMB e o\
+        \ TRIGA do CDTN. Sem resultado, devolve 200 com página vazia."
+      operationId: buscarPontosPorTitulo
+      parameters:
+      - name: termo
+        in: query
+        description: "Parte do título, de 2 a 100 caracteres"
+        required: true
+        schema:
+          type: string
+          maxLength: 100
+          minLength: 2
+        example: reator
+      - name: page
+        in: query
+        description: "Número da página, começando em 0"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: sizePage
+        in: query
+        description: "Quantidade de pontos por página, de 1 a 50"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+          maximum: 50
+          minimum: 1
+        example: 10
+      responses:
+        "200":
+          description: Página com os pontos cujo título contém o termo
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponsePontoMapaResponse"
+        "400":
+          description: "Termo ausente, em branco, com menos de 2 ou mais de 100 caracteres"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                termo com 1 caractere:
+                  description: termo com 1 caractere
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: termo
+                      message: termo deve ter entre 2 e 100 caracteres
+                termo não informado:
+                  description: termo não informado
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: Parâmetro obrigatório 'termo' não foi informado
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/areas:
+    get:
+      tags:
+      - Áreas de aplicação
+      summary: Lista as cinco áreas de aplicação
+      description: "Devolve as áreas em ordem alfabética, com id, nome e descriçã\
+        o. O app usa essa lista para montar os filtros do mapa."
+      operationId: listarAreas
+      responses:
+        "200":
+          description: Lista com as cinco áreas
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AreaAplicacaoResponse"
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/areas/{id}:
+    get:
+      tags:
+      - Áreas de aplicação
+      summary: Busca uma área pelo id
+      description: "Ids dos dados de teste: 1 Saúde, 2 Indústria, 3 Agricultura, 4\
+        \ Pesquisa Científica e 5 Energia."
+      operationId: buscarAreaPorId
+      parameters:
+      - name: id
+        in: path
+        description: "Id da área, de 1 a 5"
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 1
+      responses:
+        "200":
+          description: Área encontrada
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AreaAplicacaoResponse"
+        "400":
+          description: id menor que 1 ou que não é número
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                id menor que 1:
+                  description: id menor que 1
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: id
+                      message: id deve ser maior que zero
+                id que não é número:
+                  description: id que não é número
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    message: "Parâmetro 'id' inválido: abc"
+        "404":
+          description: Nenhuma área com esse id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 404
+                error: Not Found
+                message: Área de aplicação com id 99 não existe
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/areas/{id}/pontos:
+    get:
+      tags:
+      - Áreas de aplicação
+      summary: Lista os pontos de uma área
+      description: "Página de pontos da área, ordenada por título, com o Query Method\
+        \ findByAreaId. Devolve 404 se a área não existir."
+      operationId: listarPontosDaArea
+      parameters:
+      - name: id
+        in: path
+        description: "Id da área, de 1 a 5"
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: 0
+        example: 1
+      - name: page
+        in: query
+        description: "Número da página, começando em 0"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+        example: 0
+      - name: sizePage
+        in: query
+        description: "Quantidade de pontos por página, de 1 a 50"
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+          maximum: 50
+          minimum: 1
+        example: 10
+      responses:
+        "200":
+          description: Página de pontos da área
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageResponsePontoMapaResponse"
+        "400":
+          description: id ou paginação inválidos
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/ValidationErrorResponse"
+                - $ref: "#/components/schemas/ErrorCustomResponse"
+              examples:
+                id menor que 1:
+                  description: id menor que 1
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: id
+                      message: id deve ser maior que zero
+                sizePage acima de 50:
+                  description: sizePage acima de 50
+                  value:
+                    timestamp: 2026-10-29T10:15:30.123
+                    status: 400
+                    error: Bad Request
+                    errors:
+                    - field: sizePage
+                      message: sizePage deve ficar entre 1 e 50
+        "404":
+          description: Nenhuma área com esse id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 404
+                error: Not Found
+                message: Área de aplicação com id 99 não existe
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+  /api/areas/resumo:
+    get:
+      tags:
+      - Áreas de aplicação
+      summary: Conta os pontos de cada área
+      description: "Devolve cada área com a quantidade de pontos, em ordem alfabé\
+        tica. A contagem sai de uma consulta JPQL com left join e group by, então\
+        \ uma área sem ponto aparece com 0."
+      operationId: resumirAreas
+      responses:
+        "200":
+          description: Lista de áreas com a quantidade de pontos
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AreaResumoResponse"
+        "500":
+          description: Erro inesperado no servidor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorCustomResponse"
+              example:
+                timestamp: 2026-10-29T10:15:30.123
+                status: 500
+                error: Internal Server Error
+                message: Erro interno inesperado
+components:
+  schemas:
+    PontoMapaRequest:
+      type: object
+      description: Dados para cadastrar ou atualizar um ponto do mapa. O id e a data
+        de cadastro são gerados pelo servidor.
+      properties:
+        titulo:
+          type: string
+          description: "Nome do lugar no mapa. Não pode repetir o de outro ponto,\
+            \ sem diferenciar maiúsculas"
+          example: Reator Argonauta do IEN
+          maxLength: 150
+          minLength: 0
+        resumo:
+          type: string
+          description: Texto de cerca de um minuto de leitura que explica o lugar
+          example: "O Argonauta, no Instituto de Engenharia Nuclear, no campus da\
+            \ UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira\
+            \ criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do paí\
+            s construído e montado por empresas nacionais."
+          maxLength: 400
+          minLength: 0
+        curiosidade:
+          type: string
+          description: Fato concreto sobre o lugar. Campo opcional
+          example: "O projeto do reator foi doado ao Brasil pelo programa Átomos pela\
+            \ Paz, dos Estados Unidos."
+          maxLength: 400
+          minLength: 0
+        tipo:
+          type: string
+          description: "INSTALACAO para instalação nuclear, NATURAL para radiação\
+            \ natural e HISTORICO para fato histórico"
+          enum:
+          - INSTALACAO
+          - NATURAL
+          - HISTORICO
+          example: INSTALACAO
+        cidade:
+          type: string
+          description: Cidade onde fica o ponto
+          example: Rio de Janeiro
+          maxLength: 80
+          minLength: 0
+        uf:
+          type: string
+          description: "Sigla oficial da unidade da federação, em maiúsculas"
+          example: RJ
+        latitude:
+          type: number
+          description: "Latitude em graus decimais, dentro do território brasileiro"
+          example: -22.8656
+          maximum: 5.27
+          minimum: -33.75
+        longitude:
+          type: number
+          description: "Longitude em graus decimais, dentro do território brasileiro"
+          example: -43.2266
+          maximum: -28.84
+          minimum: -73.99
+        urlFonte:
+          type: string
+          description: Link https da fonte oficial que sustenta o resumo
+          example: https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta
+          maxLength: 500
+          minLength: 0
+          pattern: ^https://\S+$
+        idArea:
+          type: integer
+          format: int64
+          description: "Id da área de aplicação: 1 Saúde, 2 Indústria, 3 Agricultura,\
+            \ 4 Pesquisa Científica, 5 Energia"
+          example: 4
+          exclusiveMinimum: 0
+      required:
+      - cidade
+      - idArea
+      - latitude
+      - longitude
+      - resumo
+      - tipo
+      - titulo
+      - uf
+      - urlFonte
+    ErrorFieldCustom:
+      type: object
+      description: Um campo ou parâmetro inválido e o motivo
+      properties:
+        field:
+          type: string
+          description: Nome do campo do corpo ou do parâmetro da URL
+          example: uf
+        message:
+          type: string
+          description: O que está errado e como corrigir
+          example: "UF deve ser uma das 27 siglas oficiais em maiúsculas, como SP"
+    ValidationErrorResponse:
+      type: object
+      description: Erro de validação com a lista de todos os campos ou parâmetros
+        inválidos
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Momento do erro
+          example: 2026-10-29T10:15:30.123
+        status:
+          type: integer
+          format: int32
+          description: Código HTTP
+          example: 400
+        error:
+          type: string
+          description: Nome do código HTTP
+          example: Bad Request
+        errors:
+          type: array
+          description: Um item por campo ou parâmetro que falhou na validação
+          items:
+            $ref: "#/components/schemas/ErrorFieldCustom"
+    ErrorCustomResponse:
+      type: object
+      description: "Erro com uma mensagem só, usado em 400 de formato, 404, 405, 409\
+        \ e 500"
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Momento do erro
+          example: 2026-10-29T10:15:30.123
+        status:
+          type: integer
+          format: int32
+          description: Código HTTP
+          example: 404
+        error:
+          type: string
+          description: Nome do código HTTP
+          example: Not Found
+        message:
+          type: string
+          description: Explicação do erro em português
+          example: Ponto do mapa com id 9999 não existe
+    PontoMapaResponse:
+      type: object
+      description: "Ponto do mapa como o app recebe, com o id e o nome da área"
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id do ponto
+          example: 2
+        titulo:
+          type: string
+          description: Nome do lugar no mapa
+          example: Reator Multipropósito Brasileiro (RMB)
+        resumo:
+          type: string
+          description: Texto de cerca de um minuto de leitura
+          example: "O RMB é um reator de pesquisa em obras desde 2025 em Iperó, ao\
+            \ lado do Centro Experimental Aramar, da Marinha. Com até 30 MW térmicos,\
+            \ vai produzir radioisótopos para mais de 30 tipos de radiofármacos. A\
+            \ criticalidade, primeira reação em cadeia sustentada do reator, está\
+            \ prevista para 2032."
+        curiosidade:
+          type: string
+          description: Fato concreto sobre o lugar; pode vir nulo
+          example: "Hoje o Brasil importa o molibdênio-99, que dá origem ao tecné\
+            cio-99m, usado em 80% dos procedimentos de medicina nuclear. Com o RMB,\
+            \ a CNEN prevê que o país fique autossuficiente."
+        tipo:
+          type: string
+          description: Tipo do ponto
+          enum:
+          - INSTALACAO
+          - NATURAL
+          - HISTORICO
+          example: INSTALACAO
+        cidade:
+          type: string
+          description: Cidade
+          example: Iperó
+        uf:
+          type: string
+          description: Sigla da UF
+          example: SP
+        latitude:
+          type: number
+          description: Latitude em graus decimais
+          example: -23.3903
+        longitude:
+          type: number
+          description: Longitude em graus decimais
+          example: -47.6218
+        urlFonte:
+          type: string
+          description: Link da fonte oficial
+          example: https://www.gov.br/cnen/pt-br/rmb/os-avancos-para-a-saude-publica-no-brasil
+        dataCadastro:
+          type: string
+          format: date-time
+          description: "Data e hora em que o ponto foi cadastrado, gerada pelo servidor"
+          example: 2026-10-29T10:15:30.123456
+        areaId:
+          type: integer
+          format: int64
+          description: Id da área de aplicação
+          example: 1
+        areaNome:
+          type: string
+          description: Nome da área de aplicação
+          example: Saúde
+    PageResponsePontoMapaResponse:
+      type: object
+      description: "Página de resultados, sem os campos internos do Page do Spring"
+      properties:
+        content:
+          type: array
+          description: Itens da página atual
+          items:
+            $ref: "#/components/schemas/PontoMapaResponse"
+        page:
+          type: integer
+          format: int32
+          description: "Número da página, começando em 0"
+          example: 0
+        size:
+          type: integer
+          format: int32
+          description: Tamanho da página pedido em sizePage
+          example: 10
+        totalElements:
+          type: integer
+          format: int64
+          description: Total de itens encontrados em todas as páginas
+          example: 11
+        totalPages:
+          type: integer
+          format: int32
+          description: Total de páginas
+          example: 2
+        last:
+          type: boolean
+          description: true quando esta é a última página
+          example: false
+    AreaAplicacaoResponse:
+      type: object
+      description: Área de aplicação da tecnologia nuclear citada no enunciado do
+        CTMSP
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id da área
+          example: 1
+        nome:
+          type: string
+          description: Nome da área
+          example: Saúde
+        descricao:
+          type: string
+          description: "O que a área cobre, com um exemplo brasileiro"
+          example: "Radiofármacos são remédios com substâncias radioativas que mostram\
+            \ em imagens como um órgão funciona e ajudam a tratar doenças como o câ\
+            ncer. A radioterapia usa radiação para destruir células de tumores. No\
+            \ Brasil, o IPEN, em São Paulo, fornece radiofármacos a 430 clínicas e\
+            \ hospitais."
+    AreaResumoResponse:
+      type: object
+      description: "Área com a quantidade de pontos cadastrados, para os filtros do\
+        \ mapa no app"
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Id da área
+          example: 1
+        nome:
+          type: string
+          description: Nome da área
+          example: Saúde
+        quantidadePontos:
+          type: integer
+          format: int64
+          description: Quantidade de pontos da área
+          example: 3

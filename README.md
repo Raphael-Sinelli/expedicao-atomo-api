@@ -178,7 +178,7 @@ Pré-requisito: JDK 21. O Maven vem pelo wrapper do repositório, então não pr
 ```
 
 - A API sobe em http://localhost:8080, e `GET /` redireciona para o Swagger.
-- Swagger: http://localhost:8080/swagger-ui.html. O JSON OpenAPI fica em http://localhost:8080/v3/api-docs.
+- Swagger: http://localhost:8080/swagger-ui.html. O JSON OpenAPI fica em http://localhost:8080/v3/api-docs. A mesma especificação está versionada em `docs/openapi.yaml`, que abre no [editor.swagger.io](https://editor.swagger.io) sem precisar subir a API.
 - Console do H2: http://localhost:8080/h2-console, com JDBC URL `jdbc:h2:mem:expedicaoatomo`, usuário `sa` e senha em branco.
 - O banco é H2 em memória. A cada start, o Hibernate cria as tabelas e o `data.sql` carrega as 5 áreas e os 11 pontos. A aplicação não depende de nenhum serviço externo, que é como o container da entrega de DevOps sobe.
 - Postman: importe `docs/expedicao-atomo.postman_collection.json`. A variável `baseUrl` vem com `http://localhost:8080`; troque pelo IP da VM para testar na Azure. Rode as requisições na ordem, porque o POST válido guarda o id usado pelo PUT e pelo DELETE.
@@ -359,7 +359,7 @@ O pacote base é `src/main/java/br/com/fiap/t2tdsps/expedicaoatomo`.
 | Pesquisa | 10 | Busca por texto com Query Method: `findByTituloContainingIgnoreCase` em `repository/PontoMapaRepository.java`, `buscarPorTitulo` em `service/PontoMapaServiceImpl.java` e `GET /api/pontos/busca` em `controller/PontoMapaController.java`; filtros por área, UF e tipo com JPQL (`filtrar`) e resumo por área (`resumirPorArea` em `repository/AreaAplicacaoRepository.java`). Também a pesquisa de fontes oficiais que sustenta os 11 pontos e os dados do problema, listada em Fontes |
 | Validation | 10 | `dto/PontoMapaRequest.java`; constraint customizada em `validation/UfValida.java` e `validation/UfValidaValidator.java`; `@Validated` com `@Positive`, `@Min`, `@Max`, `@NotBlank` e `@Size` nos parâmetros dos controllers; respostas em `configurations/GlobalExceptionHandler.java` |
 | Qualidade do Código e Boas Práticas | 10 | Camadas `controller`, `service` (interface e `Impl`), `repository`, `dto` com records e `mapper`; injeção por construtor com campos `final`; exceções próprias em `exceptions`; 13 testes de integração em `src/test/java` |
-| Swagger | 10 | `configurations/OpenApiConfig.java` e `configurations/ExemplosOpenApi.java`; `@Tag`, `@Operation`, `@Parameter` e `@ApiResponse` com exemplos nos controllers; `@Schema` com descrição e exemplo em todos os records; `/swagger-ui.html` e `/v3/api-docs` |
+| Swagger | 10 | `configurations/OpenApiConfig.java` e `configurations/ExemplosOpenApi.java`; `@Tag`, `@Operation`, `@Parameter` e `@ApiResponse` com exemplos nos controllers; `@Schema` com descrição e exemplo em todos os records; `/swagger-ui.html` e `/v3/api-docs`, com a mesma especificação versionada em `docs/openapi.yaml` |
 
 ## Próximas sprints
 
