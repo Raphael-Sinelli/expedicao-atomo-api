@@ -9,10 +9,8 @@ Grupo Expedição Átomo, 2TDSPS
 | Nome | RM |
 |---|---|
 | Raphael Oliveira Sinelli Mendonça | 568346 |
-| [nome] | [RM] |
-| [nome] | [RM] |
-| [nome] | [RM] |
-| [nome] | [RM] |
+| Arthur Lins Belarmino | 566845 |
+| Henrique Spoltore Moreno Pavão dos Santos | 568130 |
 
 ## O problema
 
