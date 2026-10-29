@@ -1,0 +1,802 @@
+{
+  "info": {
+    "_postman_id": "6a0f8f5e-3c55-4d1b-9a77-2b5d0e7c1a41",
+    "name": "Expedição Átomo: API do Mapa Nuclear",
+    "description": "Chamadas de sucesso e de erro para todos os endpoints. Rode em ordem: o POST válido guarda o id usado pelo PUT e pelo DELETE.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "pontoId",
+      "value": "12"
+    }
+  ],
+  "item": [
+    {
+      "name": "Áreas de aplicação",
+      "item": [
+        {
+          "name": "Listar áreas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "areas"
+              ]
+            },
+            "description": "As cinco áreas do enunciado, em ordem alfabética."
+          }
+        },
+        {
+          "name": "Resumo das áreas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas/resumo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "areas",
+                "resumo"
+              ]
+            },
+            "description": "Quantidade de pontos por área. Nos dados de teste a soma dá 11."
+          }
+        },
+        {
+          "name": "Buscar área 1 (Saúde)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "areas",
+                "1"
+              ]
+            },
+            "description": "Área pelo id."
+          }
+        },
+        {
+          "name": "Buscar área 99 (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas/99",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "areas",
+                "99"
+              ]
+            },
+            "description": "Área inexistente."
+          }
+        },
+        {
+          "name": "Pontos da área 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/areas/1/pontos?page=0&sizePage=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "areas",
+                "1",
+                "pontos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "sizePage",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Pontos da área Saúde, paginados."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pontos do mapa",
+      "item": [
+        {
+          "name": "Listar pontos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos?page=0&sizePage=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "sizePage",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Primeira página, ordenada por título."
+          }
+        },
+        {
+          "name": "Filtrar por UF SP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos?uf=SP",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ],
+              "query": [
+                {
+                  "key": "uf",
+                  "value": "SP"
+                }
+              ]
+            },
+            "description": "Pontos de São Paulo."
+          }
+        },
+        {
+          "name": "Filtrar por tipo NATURAL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos?tipo=NATURAL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "NATURAL"
+                }
+              ]
+            },
+            "description": "Pontos de radiação natural, como Meaípe."
+          }
+        },
+        {
+          "name": "Filtrar por UF XX (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos?uf=XX",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ],
+              "query": [
+                {
+                  "key": "uf",
+                  "value": "XX"
+                }
+              ]
+            },
+            "description": "UF fora das 27 siglas oficiais."
+          }
+        },
+        {
+          "name": "Buscar \"reator\"",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/busca?termo=reator",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "busca"
+              ],
+              "query": [
+                {
+                  "key": "termo",
+                  "value": "reator"
+                }
+              ]
+            },
+            "description": "Busca por texto com Query Method (findByTituloContainingIgnoreCase). Encontra o RMB e o TRIGA."
+          }
+        },
+        {
+          "name": "Buscar com termo \"a\" (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/busca?termo=a",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "busca"
+              ],
+              "query": [
+                {
+                  "key": "termo",
+                  "value": "a"
+                }
+              ]
+            },
+            "description": "Termo com menos de 2 caracteres."
+          }
+        },
+        {
+          "name": "Buscar ponto 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "2"
+              ]
+            },
+            "description": "Reator Multipropósito Brasileiro (RMB)."
+          }
+        },
+        {
+          "name": "Buscar ponto 9999 (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "9999"
+              ]
+            },
+            "description": "Ponto inexistente."
+          }
+        },
+        {
+          "name": "Buscar ponto 0 (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "0"
+              ]
+            },
+            "description": "id precisa ser maior que zero."
+          }
+        },
+        {
+          "name": "Criar ponto válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set(\"pontoId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ]
+            },
+            "description": "Cadastra o reator Argonauta, do IEN. Guarda o id criado na variável pontoId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Reator Argonauta do IEN\",\n  \"resumo\": \"O Argonauta, no Instituto de Engenharia Nuclear, no campus da UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do país construído e montado por empresas nacionais.\",\n  \"curiosidade\": \"O projeto do reator foi doado ao Brasil pelo programa Átomos pela Paz, dos Estados Unidos.\",\n  \"tipo\": \"INSTALACAO\",\n  \"cidade\": \"Rio de Janeiro\",\n  \"uf\": \"RJ\",\n  \"latitude\": -22.8656,\n  \"longitude\": -43.2266,\n  \"urlFonte\": \"https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta\",\n  \"idArea\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar ponto com UF \"XX\" (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ]
+            },
+            "description": "UF fora da lista oficial.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Ponto com UF errada\",\n  \"resumo\": \"O Argonauta, no Instituto de Engenharia Nuclear, no campus da UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do país construído e montado por empresas nacionais.\",\n  \"curiosidade\": \"O projeto do reator foi doado ao Brasil pelo programa Átomos pela Paz, dos Estados Unidos.\",\n  \"tipo\": \"INSTALACAO\",\n  \"cidade\": \"Rio de Janeiro\",\n  \"uf\": \"XX\",\n  \"latitude\": -22.8656,\n  \"longitude\": -43.2266,\n  \"urlFonte\": \"https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta\",\n  \"idArea\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar ponto com latitude 10 (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400\", function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ]
+            },
+            "description": "Latitude fora do Brasil.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Ponto fora do Brasil\",\n  \"resumo\": \"O Argonauta, no Instituto de Engenharia Nuclear, no campus da UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do país construído e montado por empresas nacionais.\",\n  \"curiosidade\": \"O projeto do reator foi doado ao Brasil pelo programa Átomos pela Paz, dos Estados Unidos.\",\n  \"tipo\": \"INSTALACAO\",\n  \"cidade\": \"Rio de Janeiro\",\n  \"uf\": \"RJ\",\n  \"latitude\": 10,\n  \"longitude\": -43.2266,\n  \"urlFonte\": \"https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta\",\n  \"idArea\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar ponto com título repetido (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409\", function () { pm.response.to.have.status(409); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ]
+            },
+            "description": "Título igual ao de um ponto de teste, em outra caixa.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"radiofármacos do ipen\",\n  \"resumo\": \"O Argonauta, no Instituto de Engenharia Nuclear, no campus da UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do país construído e montado por empresas nacionais.\",\n  \"curiosidade\": \"O projeto do reator foi doado ao Brasil pelo programa Átomos pela Paz, dos Estados Unidos.\",\n  \"tipo\": \"INSTALACAO\",\n  \"cidade\": \"Rio de Janeiro\",\n  \"uf\": \"RJ\",\n  \"latitude\": -22.8656,\n  \"longitude\": -43.2266,\n  \"urlFonte\": \"https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta\",\n  \"idArea\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Atualizar ponto criado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/{{pontoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "{{pontoId}}"
+              ]
+            },
+            "description": "Troca os campos do ponto criado; id e dataCadastro continuam iguais.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Reator Argonauta do IEN\",\n  \"resumo\": \"O Argonauta, no Instituto de Engenharia Nuclear, no campus da UFRJ na Ilha do Fundão, é um reator de pesquisa que atingiu a primeira criticalidade em 20 de fevereiro de 1965. Foi o primeiro reator do país construído e montado por empresas nacionais.\",\n  \"curiosidade\": \"A inauguração oficial do Argonauta foi em 7 de maio de 1965, pouco mais de dois meses depois da primeira criticalidade.\",\n  \"tipo\": \"INSTALACAO\",\n  \"cidade\": \"Rio de Janeiro\",\n  \"uf\": \"RJ\",\n  \"latitude\": -22.8656,\n  \"longitude\": -43.2266,\n  \"urlFonte\": \"https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta\",\n  \"idArea\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Excluir ponto criado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 204\", function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/{{pontoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "{{pontoId}}"
+              ]
+            },
+            "description": "Remove o ponto criado."
+          }
+        },
+        {
+          "name": "Buscar ponto excluído (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404\", function () { pm.response.to.have.status(404); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos/{{pontoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos",
+                "{{pontoId}}"
+              ]
+            },
+            "description": "Depois do DELETE, o mesmo id não existe."
+          }
+        },
+        {
+          "name": "Excluir sem id (405)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 405\", function () { pm.response.to.have.status(405); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pontos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pontos"
+              ]
+            },
+            "description": "DELETE só existe em /api/pontos/{id}."
+          }
+        }
+      ]
+    }
+  ]
+}
