@@ -1,5 +1,7 @@
 # Expedição Átomo: API do Mapa Nuclear
 
+Esta API REST alimenta o mapa do app Expedição Átomo. Ela guarda as cinco áreas de aplicação citadas pelo CTMSP e 11 lugares reais do Brasil onde a tecnologia nuclear aparece, e todo ponto traz o link da fonte oficial que sustenta o texto.
+
 Entrega de Java Advanced da Sprint 1 do Challenge FIAP 2026, feito com o Centro Tecnológico da Marinha em São Paulo (CTMSP).
 
 ## Integrantes
@@ -28,7 +30,7 @@ A Expedição Átomo é um app Flutter gamificado em que o estudante de Ensino M
 
 A persona é a Júlia: 16 anos, 2º ano numa escola estadual da região de Sorocaba, vizinha de Iperó, presta o ENEM em 2027. Ela acha que radiação é sempre perigosa e nunca ouviu falar em radiofármaco. No mapa, ela descobre que em Iperó está sendo construído o reator que vai produzir radioisótopos para mais de 30 tipos de radiofármacos.
 
-Esta API alimenta o mapa do app. Ela guarda as áreas e os pontos, e todo ponto carrega um resumo, uma curiosidade e o link da fonte oficial que sustenta o texto, como CNEN, INB, Eletronuclear e Governo de Goiás. Benefícios e riscos aparecem lado a lado, como pede a BNCC: o IPEN, que fornece radiofármacos a 430 clínicas e hospitais, está no mesmo mapa que a rua de Goiânia onde começou o acidente com o césio-137.
+No app, cada ponto do mapa mostra um resumo, uma curiosidade e o link da fonte oficial, como CNEN, INB, Eletronuclear e Governo de Goiás. Benefícios e riscos aparecem lado a lado, como pede a BNCC: o IPEN, que fornece radiofármacos a 430 clínicas e hospitais, está no mesmo mapa que a rua de Goiânia onde começou o acidente com o césio-137.
 
 ## Como a API se encaixa no produto
 
