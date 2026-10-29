@@ -17,7 +17,7 @@ INSERT INTO PONTO_MAPA (id_area, nm_titulo, ds_resumo, ds_curiosidade, tp_ponto,
 ((SELECT id_area FROM AREA_APLICACAO WHERE nm_area = 'Saúde'),
  'Radiofármacos do IPEN',
  'Na Cidade Universitária, em São Paulo, o Centro de Radiofarmácia do IPEN produz radiofármacos, remédios com substâncias radioativas usados para diagnosticar e tratar doenças como o câncer. O IPEN fornece esses produtos a 430 clínicas e hospitais do país, que fazem cerca de 2 milhões de procedimentos por ano.',
- 'O IPEN produz radiofármacos desde 1959, quando começou a fabricar iodo-131, usado até hoje no tratamento de doenças da tireoide.',
+ 'O IPEN produz e distribui radiofármacos desde a década de 1950 e foi a primeira instituição do Brasil a desenvolver e vender esse tipo de remédio.',
  'INSTALACAO', 'São Paulo', 'SP', -23.5640, -46.7362,
  'https://www.gov.br/ipen/pt-br/centros-de-pesquisa/centro-de-radiofarmacia', CURRENT_TIMESTAMP);
 
