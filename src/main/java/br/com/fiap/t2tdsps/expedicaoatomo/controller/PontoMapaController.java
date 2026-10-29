@@ -162,7 +162,11 @@ public class PontoMapaController {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ErrorCustomResponse.class),
                     examples = @ExampleObject(value = ExemplosOpenApi.ERRO_INTERNO)))
-    public ResponseEntity<PontoMapaResponse> criar(@RequestBody @Valid PontoMapaRequest request) {
+    public ResponseEntity<PontoMapaResponse> criar(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Dados do novo ponto. O id e a data de cadastro não vão no corpo, porque o servidor gera os dois.",
+                    required = true)
+            @RequestBody @Valid PontoMapaRequest request) {
         PontoMapa criado = pontoMapaService.criar(request);
         return ResponseEntity.created(URI.create("/api/pontos/" + criado.getId()))
                 .body(PontoMapaMapper.toResponse(criado));
@@ -197,6 +201,9 @@ public class PontoMapaController {
     public ResponseEntity<PontoMapaResponse> atualizar(
             @Parameter(description = "Id do ponto a atualizar; o POST de exemplo cria o id 12", example = "12")
             @PathVariable @Positive(message = "id deve ser maior que zero") Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Todos os campos editáveis do ponto, com as mesmas regras do POST. Uma curiosidade ausente apaga a que estava gravada.",
+                    required = true)
             @RequestBody @Valid PontoMapaRequest request) {
         return ResponseEntity.ok(PontoMapaMapper.toResponse(pontoMapaService.atualizar(id, request)));
     }
