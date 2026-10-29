@@ -108,7 +108,10 @@ public class PontoMapaController {
                     examples = @ExampleObject(value = ExemplosOpenApi.ERRO_INTERNO)))
     public PageResponse<PontoMapaResponse> buscarPorTitulo(
             @Parameter(description = "Parte do título, de 2 a 100 caracteres", example = "reator")
-            @RequestParam @NotBlank(message = "termo não pode ficar em branco") @Size(min = 2, max = 100, message = "termo deve ter entre 2 e 100 caracteres") String termo,
+            @RequestParam
+            @NotBlank(message = "termo não pode ficar em branco")
+            @Size(min = 2, max = 100, message = "termo deve ter entre 2 e 100 caracteres")
+            String termo,
             @Parameter(description = "Número da página, começando em 0", example = "0")
             @RequestParam(required = false, defaultValue = "0")
             @PositiveOrZero(message = "page deve ser 0 ou maior")
@@ -212,7 +215,8 @@ public class PontoMapaController {
             @Parameter(description = "Id do ponto a atualizar; o POST de exemplo cria o id 12", example = "12")
             @PathVariable @Positive(message = "id deve ser maior que zero") Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Todos os campos editáveis do ponto, com as mesmas regras do POST. Uma curiosidade ausente apaga a que estava gravada.",
+                    description = "Todos os campos editáveis do ponto, com as mesmas regras do POST. "
+                            + "Uma curiosidade ausente apaga a que estava gravada.",
                     required = true)
             @RequestBody @Valid PontoMapaRequest request) {
         return ResponseEntity.ok(PontoMapaMapper.toResponse(pontoMapaService.atualizar(id, request)));
