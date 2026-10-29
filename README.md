@@ -184,7 +184,7 @@ Pré-requisito: JDK 21. O Maven vem pelo wrapper do repositório, então não pr
 - Postman: importe `docs/expedicao-atomo.postman_collection.json`. A variável `baseUrl` vem com `http://localhost:8080`; troque pelo IP da VM para testar na Azure. Rode as requisições na ordem, porque o POST válido guarda o id usado pelo PUT e pelo DELETE.
 - Testes: `.\mvnw.cmd test` no Windows ou `./mvnw test` no Linux e macOS. São 13 testes de integração com `@SpringBootTest` e MockMvc; cada um roda numa transação desfeita no fim, então a ordem não importa.
 
-Tecnologias: Java 21, Spring Boot 4.1.0 (Web MVC, Data JPA e Validation), H2, springdoc-openapi 3.1.1, Lombok, JUnit 5 e MockMvc.
+Tecnologias: Java 21, Spring Boot 4.1.0 (Web MVC, Data JPA e Validation), H2, springdoc-openapi 3.1.1, Lombok, JUnit 6 e MockMvc.
 
 ## Exemplos com curl
 
