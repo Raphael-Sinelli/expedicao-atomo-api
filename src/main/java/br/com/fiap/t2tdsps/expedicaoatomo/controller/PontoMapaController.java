@@ -55,7 +55,7 @@ public class PontoMapaController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista os pontos do mapa com filtros opcionais",
+    @Operation(operationId = "listarPontos", summary = "Lista os pontos do mapa com filtros opcionais",
             description = "Página de pontos ordenada por título. Os filtros areaId, uf e tipo são opcionais e podem ser "
                     + "combinados, como em ?uf=SP&tipo=INSTALACAO. Filtro ausente não restringe nada.")
     @ApiResponse(responseCode = "200", description = "Página de pontos, que pode vir vazia")
@@ -91,7 +91,7 @@ public class PontoMapaController {
     }
 
     @GetMapping("/busca")
-    @Operation(summary = "Busca pontos por parte do título",
+    @Operation(operationId = "buscarPontosPorTitulo", summary = "Busca pontos por parte do título",
             description = "Requisito \"busca por texto usando Query Method\": o repositório usa "
                     + "findByTituloContainingIgnoreCase, que acha o termo em qualquer parte do título sem diferenciar "
                     + "maiúsculas. Com termo=reator, volta o RMB e o TRIGA do CDTN. Sem resultado, devolve 200 com página vazia.")
@@ -126,7 +126,7 @@ public class PontoMapaController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca um ponto pelo id",
+    @Operation(operationId = "buscarPontoPorId", summary = "Busca um ponto pelo id",
             description = "Devolve o ponto com o id e o nome da área. Os pontos de teste têm ids de 1 a 11.")
     @ApiResponse(responseCode = "200", description = "Ponto encontrado")
     @ApiResponse(responseCode = "400", description = "id menor que 1 ou que não é número",
@@ -150,7 +150,7 @@ public class PontoMapaController {
     }
 
     @PostMapping
-    @Operation(summary = "Cadastra um ponto no mapa",
+    @Operation(operationId = "criarPonto", summary = "Cadastra um ponto no mapa",
             description = "O servidor gera o id e a data de cadastro e busca a área pelo idArea. O título não pode repetir "
                     + "o de outro ponto, sem diferenciar maiúsculas. O exemplo cadastra o reator Argonauta, do IEN, "
                     + "que não está nos dados de teste.")
@@ -186,7 +186,7 @@ public class PontoMapaController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualiza todos os campos de um ponto",
+    @Operation(operationId = "atualizarPonto", summary = "Atualiza todos os campos de um ponto",
             description = "Substitui todos os campos editáveis do ponto. O id e a data de cadastro continuam os mesmos. "
                     + "O título não pode ser igual ao de outro ponto.")
     @ApiResponse(responseCode = "200", description = "Ponto atualizado")
@@ -223,7 +223,7 @@ public class PontoMapaController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Exclui um ponto do mapa",
+    @Operation(operationId = "excluirPonto", summary = "Exclui um ponto do mapa",
             description = "Remove o ponto e devolve 204 sem corpo. Depois disso, um GET do mesmo id devolve 404.")
     @ApiResponse(responseCode = "204", description = "Ponto excluído", content = @Content)
     @ApiResponse(responseCode = "400", description = "id menor que 1 ou que não é número",

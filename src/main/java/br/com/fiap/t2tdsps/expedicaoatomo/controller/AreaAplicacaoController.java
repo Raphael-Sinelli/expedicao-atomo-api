@@ -50,7 +50,7 @@ public class AreaAplicacaoController {
     }
 
     @GetMapping
-    @Operation(summary = "Lista as cinco áreas de aplicação",
+    @Operation(operationId = "listarAreas", summary = "Lista as cinco áreas de aplicação",
             description = "Devolve as áreas em ordem alfabética, com id, nome e descrição. O app usa essa lista para "
                     + "montar os filtros do mapa.")
     @ApiResponse(responseCode = "200", description = "Lista com as cinco áreas")
@@ -65,7 +65,7 @@ public class AreaAplicacaoController {
     }
 
     @GetMapping("/resumo")
-    @Operation(summary = "Conta os pontos de cada área",
+    @Operation(operationId = "resumirAreas", summary = "Conta os pontos de cada área",
             description = "Devolve cada área com a quantidade de pontos, em ordem alfabética. A contagem sai de uma "
                     + "consulta JPQL com left join e group by, então uma área sem ponto aparece com 0.")
     @ApiResponse(responseCode = "200", description = "Lista de áreas com a quantidade de pontos")
@@ -78,7 +78,7 @@ public class AreaAplicacaoController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca uma área pelo id",
+    @Operation(operationId = "buscarAreaPorId", summary = "Busca uma área pelo id",
             description = "Ids dos dados de teste: 1 Saúde, 2 Indústria, 3 Agricultura, 4 Pesquisa Científica e 5 Energia.")
     @ApiResponse(responseCode = "200", description = "Área encontrada")
     @ApiResponse(responseCode = "400", description = "id menor que 1 ou que não é número",
@@ -102,7 +102,7 @@ public class AreaAplicacaoController {
     }
 
     @GetMapping("/{id}/pontos")
-    @Operation(summary = "Lista os pontos de uma área",
+    @Operation(operationId = "listarPontosDaArea", summary = "Lista os pontos de uma área",
             description = "Página de pontos da área, ordenada por título, com o Query Method findByAreaId. "
                     + "Devolve 404 se a área não existir.")
     @ApiResponse(responseCode = "200", description = "Página de pontos da área")
