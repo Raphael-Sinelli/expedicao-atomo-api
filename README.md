@@ -306,7 +306,7 @@ Resposta (201, com o header `Location: /api/pontos/12`):
   "latitude": -22.8656,
   "longitude": -43.2266,
   "urlFonte": "https://www.gov.br/ien/pt-br/instalacoes/reator-nuclear-de-pesquisa-argonauta",
-  "dataCadastro": "2026-10-29T00:19:05.3525514",
+  "dataCadastro": "2026-10-29T00:28:26",
   "areaId": 4,
   "areaNome": "Pesquisa Científica"
 }

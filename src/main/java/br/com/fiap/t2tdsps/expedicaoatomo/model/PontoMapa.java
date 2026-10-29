@@ -18,6 +18,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "PONTO_MAPA")
@@ -66,8 +67,10 @@ public class PontoMapa {
     @Column(name = "dt_cadastro", nullable = false, updatable = false)
     private LocalDateTime dataCadastro;
 
+    // Sem fração de segundo: o relógio do sistema tem mais casas do que a coluna guarda, e o POST devolveria
+    // um valor diferente do que o GET lê depois.
     @PrePersist
     void preencherDataCadastro() {
-        this.dataCadastro = LocalDateTime.now();
+        this.dataCadastro = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 }
